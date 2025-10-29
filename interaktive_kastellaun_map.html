@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Interaktive Karte — Kastellaun (Beispiel)</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2XkP7rj9gqk6m3p4p2k6Yp0b0h6S3q2fXwYg6kM=" crossorigin="" />
+
+  <style>
+    :root{--accent:#2b7a78;--muted:#666}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+    #app{display:grid;grid-template-columns:360px 1fr;height:100vh}
+
+    /* Sidebar */
+    .sidebar{padding:20px;border-right:1px solid #eee;background:#fafafa;box-shadow:inset -1px 0 0 rgba(0,0,0,0.02);overflow:auto}
+    .brand{font-weight:700;color:var(--accent);font-size:18px;margin-bottom:10px}
+    .lead{color:var(--muted);margin-bottom:12px}
+    .search{display:flex;margin-bottom:12px}
+    .search input{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px}
+    .list{margin:0;padding:0;list-style:none}
+    .list li{background:#fff;border:1px solid #eee;padding:10px;border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+    .list li h4{margin:0;font-size:15px}
+    .controls{display:flex;gap:6px}
+    .btn{background:var(--accent);color:#fff;padding:6px 8px;border-radius:6px;text-decoration:none;font-size:13px}
+    .btn.secondary{background:#eee;color:#333}
+    .footer{font-size:12px;color:#888;margin-top:14px}
+
+    /* Map */
+    #map{width:100%;height:100%}
+
+    /* Responsive */
+    @media (max-width:800px){#app{grid-template-columns:1fr} .sidebar{position:absolute;z-index:300;width:calc(100% - 20px);left:10px;top:10px;border-radius:10px}}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <aside class="sidebar">
+      <div class="brand">Interaktive Karte: Kastellaun — Beispiel</div>
+      <div class="lead">Klicken Sie auf einen Ort in der Liste oder auf einen Marker, um Informationen zu sehen. Die Karte ist als Beispiel für Ihre Bewerbung gedacht — einfach anpassbar.</div>
+
+      <div class="search">
+        <input id="searchBox" placeholder="Ort suchen (z. B. Burg)" />
+      </div>
+
+      <ul id="places" class="list"></ul>
+
+      <div class="footer">Beispiel-Daten: Burg Kastellaun, Rathaus, Tourist-Info, Haus der regionalen Geschichte. Koordinaten aus öffentlichen Quellen (Beispielprojekt).</div>
+    </aside>
+
+    <main id="map"></main>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9N1j8kY3k6nYz3gKkV3Qxk6b1p0w0s6p1h2v3y4z0M=" crossorigin=""></script>
+
+  <script>
+    // --- Daten (Beispiel) ---
+    // Koordinaten stammen aus frei verfügbaren Verzeichnissen / Tourismusseiten.
+    const places = [
+      {
+        id: 'burg',
+        title: 'Burg Kastellaun',
+        lat: 50.07117,
+        lon: 7.43879,
+        short: 'Ruine und Wahrzeichen der Stadt; Ausstellungsflächen und Aussichtspunkt.',
+        url: 'https://www.kastellaun.de/burg'
+      },
+      {
+        id: 'haus-regional',
+        title: 'Haus der regionalen Geschichte',
+        lat: 50.07105,
+        lon: 7.43920,
+        short: 'Museum und regionale Ausstellung (Beispielstandort).',
+        url: 'https://www.kastellaun.de/'
+      },
+      {
+        id: 'rathaus',
+        title: 'Rathaus / Verbandsgemeinde',
+        lat: 50.07060,
+        lon: 7.44350,
+        short: 'Verwaltungsgebäude der Verbandsgemeinde Kastellaun.',
+        url: 'https://www.kastellaun.de/rathaus/'
+      },
+      {
+        id: 'tourist',
+        title: 'Tourist-Information',
+        lat: 50.07090,
+        lon: 7.44050,
+        short: 'Informationsstelle für Besucher*innen.',
+        url: 'https://www.kastellaun.de/'
+      }
+    ];
+
+    // --- Karte initialisieren ---
+    const map = L.map('map', {zoomControl: true}).setView([50.0710, 7.4400], 15);
+
+    // OpenStreetMap-Kachel
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap-Mitwirkende'
+    }).addTo(map);
+
+    // Marker-Icon (klein und sauber)
+    const icon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      iconSize: [25,41],
+      iconAnchor: [12,41],
+      popupAnchor: [1,-34]
+    });
+
+    // Marker erstellen
+    const markers = {};
+    places.forEach(p => {
+      const m = L.marker([p.lat, p.lon], {icon}).addTo(map);
+      m.bindPopup(`<strong>${p.title}</strong><br>${p.short}<br><a href="${p.url}" target="_blank" rel="noopener">Mehr</a>\`);
+      markers[p.id] = m;
+    });
+
+    // --- Sidebar Liste füllen ---
+    const listEl = document.getElementById('places');
+    function renderList(filter = ''){
+      listEl.innerHTML = '';
+      const filtered = places.filter(p => (p.title + ' ' + p.short).toLowerCase().includes(filter.toLowerCase()));
+      filtered.forEach(p =>{
+        const li = document.createElement('li');
+        const left = document.createElement('div');
+        const h = document.createElement('h4'); h.textContent = p.title;
+        const s = document.createElement('div'); s.style.fontSize='13px'; s.style.color='#666'; s.textContent = p.short;
+        left.appendChild(h); left.appendChild(s);
+
+        const controls = document.createElement('div'); controls.className='controls';
+        const btn = document.createElement('a'); btn.href='#'; btn.className='btn'; btn.textContent='Zeigen';
+        btn.addEventListener('click', (e)=>{e.preventDefault(); flyToPlace(p.id);});
+
+        const ext = document.createElement('a'); ext.href=p.url; ext.target='_blank'; ext.rel='noopener'; ext.className='btn secondary'; ext.textContent='Web';
+
+        controls.appendChild(btn); controls.appendChild(ext);
+        li.appendChild(left); li.appendChild(controls);
+        listEl.appendChild(li);
+      });
+
+      if(filtered.length===0){
+        listEl.innerHTML = '<li style="background:transparent;border:none;color:#666">Keine Treffer.</li>'
+      }
+    }
+    renderList();
+
+    // Fly-to-Funktion
+    function flyToPlace(id){
+      const p = places.find(x=>x.id===id);
+      if(!p) return;
+      map.flyTo([p.lat,p.lon], 17, {duration:0.8});
+      setTimeout(()=>{ markers[id].openPopup(); }, 900);
+    }
+
+    // Search
+    const searchBox = document.getElementById('searchBox');
+    searchBox.addEventListener('input', ()=> renderList(searchBox.value));
+
+    // Keyboard: Enter -> first result
+    searchBox.addEventListener('keydown', e=>{ if(e.key==='Enter'){ const first = listEl.querySelector('li'); if(first){ first.querySelector('.btn').click(); } } });
+
+    // Optional: Geo-Locate (Nutzerposition) — mit Einverständnis
+    function addLocateButton(){
+      const locate = L.control({position:'topright'});
+      locate.onAdd = function(){
+        const btn = L.DomUtil.create('button','btn'); btn.style.margin='8px'; btn.textContent='Mein Standort';
+        btn.onclick = ()=>{
+          map.locate({setView:true,maxZoom:16});
+        };
+        return btn;
+      };
+      locate.addTo(map);
+
+      map.on('locationfound', e=>{
+        const radius = e.accuracy;
+        L.marker(e.latlng).addTo(map).bindPopup('Hier sind Sie (≈ ' + Math.round(radius) + ' m)').openPopup();
+      });
+      map.on('locationerror', ()=> alert('Standort konnte nicht ermittelt werden.'));
+    }
+    addLocateButton();
+
+    // --- Export-Funktion: Link zu Google Maps mit Koordinaten ---
+    function openExternalDirections(id){
+      const p = places.find(x=>x.id===id);
+      if(!p) return;
+      const g = `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}`;
+      window.open(g, '_blank');
+    }
+
+    // Beispiel: Kontextmenü für Marker: Rechtsklick -> Routenlink
+    Object.keys(markers).forEach(id =>{
+      markers[id].on('contextmenu', ()=> openExternalDirections(id));
+    });
+
+    // Accessibility hint
+    console.log('Tipp: Rechtsklick auf einen Marker öffnet Google Maps-Routen-Link.');
+  </script>
+</body>
+</html>
