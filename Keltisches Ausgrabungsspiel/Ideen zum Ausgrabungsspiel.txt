@@ -1,0 +1,5 @@
+Nur begrenzte Anzahl Versuche bis man ermüdet ist.
+Alles was bis zur Nacht (Ende Kraft) nicht eingesammelt wurde, wird von Grabräubern geplündert.
+Gegenstände in verschiedenen Schichten deuten auf verschiedene Zeiten hin.
+Moderne Störungen einbauen.
+Große und kleine Gegenstände.

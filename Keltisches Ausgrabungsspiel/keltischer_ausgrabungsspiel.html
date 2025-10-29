@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Keltischer Ausgrabungssimulator — Museumskiosk</title>
+  <style>
+    :root{--bg:#f0efe8;--soil:#8b5a2b;--dug:#e6d6b8;--accent:#2b7a78}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:linear-gradient(#fff,#f7f5ef);color:#222}
+    header{width:100%;max-width:1100px;padding:18px 24px;display:flex;align-items:center;gap:16px}
+    h1{font-size:20px;margin:0}
+    #game{width:100%;max-width:1100px;background:var(--bg);border-radius:12px;box-shadow:0 8px 24px rgba(20,20,40,0.08);padding:18px;margin-bottom:32px}
+    .topbar{display:flex;gap:12px;align-items:center;justify-content:space-between}
+    .controls{display:flex;gap:8px;align-items:center}
+    button{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;font-weight:600;cursor:pointer}
+    button.secondary{background:#ccc;color:#111}
+    #canvas-wrap{display:flex;gap:18px;align-items:flex-start;margin-top:12px}
+    canvas{background:linear-gradient(#cfa97f,#8b5a2b);border-radius:10px;box-shadow:inset 0 -40px 60px rgba(0,0,0,0.12)}
+    .panel{width:300px}
+    .panel h3{margin:8px 0}
+    .artifact{display:flex;gap:8px;align-items:center;padding:8px;border-radius:8px;background:linear-gradient(#fff,#f7f7f7);margin-bottom:8px}
+    .artifact .icon{width:48px;height:48px;border-radius:8px;background:#e6d6b8;display:flex;align-items:center;justify-content:center;font-weight:700}
+    .meter{height:10px;background:#eee;border-radius:8px;overflow:hidden}
+    .meter > i{display:block;height:100%;background:linear-gradient(90deg,#2b7a78,#4fb2a6)}
+    footer{font-size:13px;color:#666;padding:18px}
+    /* touchscreen big targets */
+    .big{padding:12px 16px;border-radius:10px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Keltischer Ausgrabungssimulator</h1>
+    <div style="margin-left:auto;color:#666">Touchfreundlich · Für Museumskiosk</div>
+  </header>
+
+  <main id="game">
+    <div class="topbar">
+      <div class="controls">
+        <button id="newBtn">Neues Feld</button>
+        <button id="hintBtn" class="secondary">Hinweis (zeigt Hotspot)</button>
+        <label style="display:flex;align-items:center;gap:8px;margin-left:8px;color:#444">Putzgröße
+          <select id="brushSize" class="big">
+            <option value="1">Klein</option>
+            <option value="2" selected>Mittel</option>
+            <option value="3">Groß</option>
+          </select>
+        </label>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <div style="text-align:right">
+          <div style="font-size:12px;color:#888">Gefundene Objekte</div>
+          <div id="foundCount">0 / 5</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:12px;color:#888">Zeit</div>
+          <div id="timer">00:00</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="canvas-wrap">
+      <canvas id="field" width="760" height="480" role="application" aria-label="Ausgrabungsfeld"></canvas>
+
+      <aside class="panel" aria-live="polite">
+        <h3>Gefundene Objekte</h3>
+        <div id="foundList">
+          <!-- gefundene Objekte erscheinen hier -->
+        </div>
+
+        <h3>Infos</h3>
+        <p style="font-size:14px;color:#444">Willkommen! Benutze die Schaufel (klick/touch) um Erde zu entfernen. Finde keltische Artefakte und lerne etwas über sie. Dieses Spiel ist pädagogisch: jeder Fund hat eine Beschreibung.</p>
+
+        <h3>Leiste</h3>
+        <div class="meter" style="margin-top:6px"><i id="progress" style="width:0%"></i></div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>Hinweis: Sensibler Inhalt — Gräber sind Teil kultureller Erbschaften. Präsentieren Sie das Spiel als Lern- und Respektübung.</footer>
+
+<script>
+(() => {
+  const canvas = document.getElementById('field');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const cols = 19, rows = 12;
+  const tileW = Math.floor(W/cols), tileH = Math.floor(H/rows);
+
+  // Spielzustand
+  let grid = []; // {dug:0..1, artifact: null | artifactIndex}
+  let artifacts = [];
+  const totalArtifacts = 5;
+  let found = 0;
+  let startTime = null;
+  let timerInt = null;
+
+  const artifactDefs = [
+    {name:'Bronzefibel',desc:'Eine keltische Kleidungsschnalle aus Bronze.'},
+    {name:'Keramikschale',desc:'Bemalte Keramik, wahrscheinlich Haushaltsgebrauch.'},
+    {name:'Glasscheibe',desc:'Fragment farbigen Glases, möglicherweise Schmuck.'},
+    {name:'Eisennagel',desc:'Teil eines Holzkonstrukts oder Wagenteils.'},
+    {name:'Gürtelbeschlag',desc:'Verziert; deutet auf Status der Person hin.'}
+  ];
+
+  function resetField(){
+    grid = Array(rows).fill(0).map(()=>Array(cols).fill(0).map(()=>({dug:0, artifact:null, revealed:false})));
+    artifacts = [];
+    found = 0;
+    document.getElementById('foundCount').innerText = `${found} / ${totalArtifacts}`;
+    document.getElementById('foundList').innerHTML = '';
+    document.getElementById('progress').style.width = '0%';
+
+    // zufällige artefakte platzieren, vermeiden zu nahe beieinander
+    let placed = 0;
+    function placeOne(i){
+      let tries = 0;
+      while(tries++ < 200){
+        const r = Math.floor(Math.random()*rows);
+        const c = Math.floor(Math.random()*cols);
+        if(grid[r][c].artifact !== null) continue;
+        // simple distance check
+        let ok = true;
+        for(const a of artifacts){
+          const d = Math.hypot(a.r - r, a.c - c);
+          if(d < 3) { ok = false; break; }
+        }
+        if(!ok) continue;
+        grid[r][c].artifact = placed; // store index
+        artifacts.push({r,c,def:artifactDefs[placed]});
+        placed++;
+        break;
+      }
+    }
+    for(let i=0;i<totalArtifacts;i++) placeOne(i);
+
+    // start timer
+    startTime = Date.now();
+    if(timerInt) clearInterval(timerInt);
+    timerInt = setInterval(updateTimer, 500);
+
+    draw();
+  }
+
+  function updateTimer(){
+    const s = Math.floor((Date.now()-startTime)/1000);
+    const mm = String(Math.floor(s/60)).padStart(2,'0');
+    const ss = String(s%60).padStart(2,'0');
+    document.getElementById('timer').innerText = `${mm}:${ss}`;
+  }
+
+  function draw(){
+    // background layers to simulate soil with slightly varied tiles
+    ctx.clearRect(0,0,W,H);
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const x = c*tileW, y = r*tileH;
+        const g = grid[r][c];
+        // soil color varies with dugness
+        const soilMix = 1 - g.dug;
+        const soilR = Math.round(139*soilMix + 230*(1-soilMix));
+        const soilG = Math.round(90*soilMix + 214*(1-soilMix));
+        const soilB = Math.round(43*soilMix + 184*(1-soilMix));
+        ctx.fillStyle = `rgb(${soilR},${soilG},${soilB})`;
+        ctx.fillRect(x,y,tileW-1,tileH-1);
+
+        // small pebbles and texture
+        ctx.fillStyle = 'rgba(0,0,0,0.04)';
+        for(let i=0;i<3;i++){
+          ctx.fillRect(x + (i*7)%tileW, y + (i*11)%tileH, 1,1);
+        }
+
+        if(g.revealed && g.artifact !== null){
+          // draw artifact icon simple
+          drawArtifactIcon(x+tileW/2, y+tileH/2, g.artifact);
+        }
+
+        // faint grid lines
+        ctx.strokeStyle = 'rgba(0,0,0,0.03)';
+        ctx.strokeRect(x,y,tileW,tileH);
+      }
+    }
+  }
+
+  function drawArtifactIcon(cx, cy, idx){
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.beginPath();
+    // simple shapes per type
+    switch(idx){
+      case 0: // fibula
+        ctx.fillStyle = '#c77f00'; ctx.fillRect(-8,-2,16,4);
+        ctx.fillStyle = '#b56500'; ctx.beginPath(); ctx.arc(6,0,3,0,Math.PI*2); ctx.fill();
+        break;
+      case 1: // keramik
+        ctx.fillStyle = '#844'; ctx.beginPath(); ctx.ellipse(0,0,10,6,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#a66'; ctx.fillRect(-4,-2,8,4);
+        break;
+      case 2: // glas
+        ctx.fillStyle = '#3aa'; ctx.beginPath(); ctx.moveTo(-6,6); ctx.lineTo(0,-6); ctx.lineTo(6,6); ctx.closePath(); ctx.fill();
+        break;
+      case 3: // eisen
+        ctx.fillStyle = '#444'; ctx.fillRect(-6,-6,12,12);
+        ctx.fillStyle='#222'; ctx.fillRect(-3,-3,6,6);
+        break;
+      case 4:
+        ctx.fillStyle = '#a77'; ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#c88'; ctx.fillRect(-3,-2,6,4);
+        break;
+    }
+    ctx.restore();
+  }
+
+  // digging logic: when user clicks/touches, we increase dug amount of tiles inside brush
+  function digAt(px,py,brush){
+    const c = Math.floor(px / tileW);
+    const r = Math.floor(py / tileH);
+    if(r<0||r>=rows||c<0||c>=cols) return;
+    let newlyFound = false;
+    for(let dr=-brush;dr<=brush;dr++){
+      for(let dc=-brush;dc<=brush;dc++){
+        const rr = r+dr, cc = c+dc;
+        if(rr<0||rr>=rows||cc<0||cc>=cols) continue;
+        const cell = grid[rr][cc];
+        // increment dugness
+        cell.dug = Math.min(1, cell.dug + 0.45);
+        // if dug enough, reveal
+        if(cell.dug >= 0.9 && !cell.revealed){
+          cell.revealed = true;
+          if(cell.artifact !== null){
+            handleArtifactFound(cell.artifact, rr, cc);
+            newlyFound = true;
+          }
+        }
+      }
+    }
+    // update progress bar
+    const progress = Math.round((found/totalArtifacts)*100);
+    document.getElementById('progress').style.width = progress + '%';
+    draw();
+    return newlyFound;
+  }
+
+  function handleArtifactFound(idx, r, c){
+    found++;
+    document.getElementById('foundCount').innerText = `${found} / ${totalArtifacts}`;
+    const def = artifactDefs[idx];
+    const list = document.getElementById('foundList');
+    const wrap = document.createElement('div'); wrap.className='artifact';
+    const icon = document.createElement('div'); icon.className='icon'; icon.innerText = def.name[0];
+    const meta = document.createElement('div');
+    meta.innerHTML = `<strong>${def.name}</strong><div style=\"font-size:12px;color:#666\">${def.desc}</div>`;
+    wrap.appendChild(icon); wrap.appendChild(meta);
+    list.appendChild(wrap);
+
+    // if all found -> show finish message
+    if(found >= totalArtifacts){
+      setTimeout(()=>{
+        const s = Math.floor((Date.now()-startTime)/1000);
+        alert(`Gratulation! Du hast alle Artefakte gefunden in ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')} Minuten.`);
+      },200);
+    }
+  }
+
+  // Controls
+  let digging = false;
+  let brush = parseInt(document.getElementById('brushSize').value);
+  document.getElementById('brushSize').addEventListener('change',e=>brush=parseInt(e.target.value));
+
+  canvas.addEventListener('mousedown', e=>{ digging=true; const rect=canvas.getBoundingClientRect(); digAt(e.clientX-rect.left,e.clientY-rect.top,brush); });
+  window.addEventListener('mouseup', ()=>digging=false);
+  canvas.addEventListener('mousemove', e=>{ if(digging){ const rect=canvas.getBoundingClientRect(); digAt(e.clientX-rect.left,e.clientY-rect.top,brush); }});
+
+  // touch
+  canvas.addEventListener('touchstart', e=>{ e.preventDefault(); digging=true; const t = e.touches[0]; const rect=canvas.getBoundingClientRect(); digAt(t.clientX-rect.left,t.clientY-rect.top,brush); });
+  canvas.addEventListener('touchmove', e=>{ e.preventDefault(); if(digging){ const t = e.touches[0]; const rect=canvas.getBoundingClientRect(); digAt(t.clientX-rect.left,t.clientY-rect.top,brush); }});
+  window.addEventListener('touchend', ()=>digging=false);
+
+  document.getElementById('newBtn').addEventListener('click', resetField);
+
+  // hint: show a pulsing highlight at one artifact
+  document.getElementById('hintBtn').addEventListener('click', ()=>{
+    const remaining = artifacts.filter(a=>!grid[a.r][a.c].revealed);
+    if(remaining.length===0) return alert('Keine Hinweise mehr — alles entdeckt!');
+    const a = remaining[Math.floor(Math.random()*remaining.length)];
+    // highlight by drawing an overlay for a moment
+    const x = a.c*tileW, y = a.r*tileH;
+    let alpha = 0.9;
+    const int = setInterval(()=>{
+      draw();
+      ctx.fillStyle = `rgba(255,255,100,${alpha})`;
+      ctx.fillRect(x,y,tileW,tileH);
+      alpha -= 0.08;
+      if(alpha <= 0){ clearInterval(int); draw(); }
+    },80);
+  });
+
+  // accessibility: keyboard arrow to move and space to dig
+  let cursor = {r: Math.floor(rows/2), c: Math.floor(cols/2)};
+  function drawCursor(){
+    draw();
+    ctx.strokeStyle = '#fff8'; ctx.lineWidth = 3;
+    ctx.strokeRect(cursor.c*tileW+2, cursor.r*tileH+2, tileW-4, tileH-4);
+  }
+  drawCursor();
+  window.addEventListener('keydown', e=>{
+    if(e.key === 'ArrowUp'){ cursor.r = Math.max(0,cursor.r-1); drawCursor(); }
+    if(e.key === 'ArrowDown'){ cursor.r = Math.min(rows-1,cursor.r+1); drawCursor(); }
+    if(e.key === 'ArrowLeft'){ cursor.c = Math.max(0,cursor.c-1); drawCursor(); }
+    if(e.key === 'ArrowRight'){ cursor.c = Math.min(cols-1,cursor.c+1); drawCursor(); }
+    if(e.key === ' '|| e.key === 'Enter'){ digAt((cursor.c+0.5)*tileW,(cursor.r+0.5)*tileH,parseInt(document.getElementById('brushSize').value)); }
+  });
+
+  // initial
+  resetField();
+})();
+</script>
+</body>
+</html>
