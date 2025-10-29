@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meine GitHub Pages Seite</title>
+  <style>
+    /* Grundlegendes Layout */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    header h1 {
+      margin-bottom: 0.5rem;
+      color: #222;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      width: 90%;
+      max-width: 1000px;
+      padding-bottom: 3rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    .card-content h2 {
+      margin-top: 0;
+      color: #0077b6;
+    }
+
+    .card-content p {
+      color: #555;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 1rem;
+      text-align: center;
+      color: #777;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Willkommen auf meiner GitHub Page</h1>
+    <p>Eine einfache Startseite mit drei Kacheln</p>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <img src="https://via.placeholder.com/400x180.png?text=Projekt+1" alt="Projekt 1">
+      <div class="card-content">
+        <h2>Projekt 1</h2>
+        <p>Kurze Beschreibung deines ersten Projekts. Zum Beispiel ein Web-Tool oder eine App.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://via.placeholder.com/400x180.png?text=Projekt+2" alt="Projekt 2">
+      <div class="card-content">
+        <h2>Projekt 2</h2>
+        <p>Hier kannst du dein zweites Projekt oder eine andere interessante Arbeit zeigen.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://via.placeholder.com/400x180.png?text=Projekt+3" alt="Projekt 3">
+      <div class="card-content">
+        <h2>Projekt 3</h2>
+        <p>Ein weiteres Beispiel oder vielleicht ein persönliches Experiment.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 – Erstellt mit ❤️ für GitHub Pages
+  </footer>
+
+</body>
+</html>
