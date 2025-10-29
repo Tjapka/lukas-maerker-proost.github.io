@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Interaktive Karte — Kastellaun (Beispiel)</title>
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2XkP7rj9gqk6m3p4p2k6Yp0b0h6S3q2fXwYg6kM=" crossorigin="" />
+  <!-- Leaflet CSS (ohne integrity, damit keine SRI-Fehler) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 
   <style>
     :root{--accent:#2b7a78;--muted:#666}
@@ -38,7 +38,7 @@
   <div id="app">
     <aside class="sidebar">
       <div class="brand">Interaktive Karte: Kastellaun — Beispiel</div>
-      <div class="lead">Klicken Sie auf einen Ort in der Liste oder auf einen Marker, um Informationen zu sehen. Die Karte ist als Beispiel für Ihre Bewerbung gedacht — einfach anpassbar.</div>
+      <div class="lead">Klicken Sie auf einen Ort in der Liste oder auf einen Marker, um Informationen zu sehen.</div>
 
       <div class="search">
         <input id="searchBox" placeholder="Ort suchen (z. B. Burg)" />
@@ -46,18 +46,17 @@
 
       <ul id="places" class="list"></ul>
 
-      <div class="footer">Beispiel-Daten: Burg Kastellaun, Rathaus, Tourist-Info, Haus der regionalen Geschichte. Koordinaten aus öffentlichen Quellen (Beispielprojekt).</div>
+      <div class="footer">Beispiel-Daten: Burg Kastellaun, Rathaus, Tourist-Info, Haus der regionalen Geschichte. Koordinaten aus öffentlichen Quellen.</div>
     </aside>
 
     <main id="map"></main>
   </div>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9N1j8kY3k6nYz3gKkV3Qxk6b1p0w0s6p1h2v3y4z0M=" crossorigin=""></script>
+  <!-- Leaflet JS (ohne integrity) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <script>
     // --- Daten (Beispiel) ---
-    // Koordinaten stammen aus frei verfügbaren Verzeichnissen / Tourismusseiten.
     const places = [
       {
         id: 'burg',
@@ -72,7 +71,7 @@
         title: 'Haus der regionalen Geschichte',
         lat: 50.07105,
         lon: 7.43920,
-        short: 'Museum und regionale Ausstellung (Beispielstandort).',
+        short: 'Museum und regionale Ausstellung.',
         url: 'https://www.kastellaun.de/'
       },
       {
@@ -114,7 +113,8 @@
     const markers = {};
     places.forEach(p => {
       const m = L.marker([p.lat, p.lon], {icon}).addTo(map);
-      m.bindPopup(`<strong>${p.title}</strong><br>${p.short}<br><a href="${p.url}" target="_blank" rel="noopener">Mehr</a>\`);
+      // <-- hier: korrigiertes Template-Literal (kein Backslash vor dem Backtick)
+      m.bindPopup(`<strong>${p.title}</strong><br>${p.short}<br><a href="${p.url}" target="_blank" rel="noopener">Mehr</a>`);
       markers[p.id] = m;
     });
 
@@ -160,7 +160,7 @@
     searchBox.addEventListener('input', ()=> renderList(searchBox.value));
 
     // Keyboard: Enter -> first result
-    searchBox.addEventListener('keydown', e=>{ if(e.key==='Enter'){ const first = listEl.querySelector('li'); if(first){ first.querySelector('.btn').click(); } } });
+    searchBox.addEventListener('keydown', e=>{ if(e.key==='Enter'){ const first = listEl.querySelector('li'); if(first){ const btn = first.querySelector('.btn'); if(btn) btn.click(); } } });
 
     // Optional: Geo-Locate (Nutzerposition) — mit Einverständnis
     function addLocateButton(){
@@ -190,7 +190,7 @@
       window.open(g, '_blank');
     }
 
-    // Beispiel: Kontextmenü für Marker: Rechtsklick -> Routenlink
+    // Kontextmenü für Marker: Rechtsklick -> Routenlink
     Object.keys(markers).forEach(id =>{
       markers[id].on('contextmenu', ()=> openExternalDirections(id));
     });
