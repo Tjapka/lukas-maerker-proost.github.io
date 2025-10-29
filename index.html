@@ -3,117 +3,86 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meine GitHub Pages Seite</title>
+  <title>Startseite</title>
   <style>
-    /* Grundlegendes Layout */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f8f9fa;
       margin: 0;
-      padding: 0;
+      font-family: system-ui, sans-serif;
       display: flex;
       flex-direction: column;
-      align-items: center;
       min-height: 100vh;
+      background-color: #f8f9fa;
     }
 
-    header {
-      text-align: center;
-      padding: 2rem 1rem;
-    }
-
-    header h1 {
-      margin-bottom: 0.5rem;
-      color: #222;
-    }
-
-    .grid {
+    .container {
+      flex: 1;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      width: 90%;
-      max-width: 1000px;
-      padding-bottom: 3rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      height: 100vh;
     }
 
-    .card {
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .tile {
+      position: relative;
       overflow: hidden;
-      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    .tile:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
 
-    .card img {
+    .tile img {
       width: 100%;
-      height: 180px;
+      height: 100%;
       object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
     }
 
-    .card-content {
-      padding: 1.5rem;
+    .tile:hover img {
+      transform: scale(1.05);
     }
 
-    .card-content h2 {
-      margin-top: 0;
-      color: #0077b6;
-    }
-
-    .card-content p {
-      color: #555;
-    }
-
-    footer {
-      margin-top: auto;
+    /* Optional: halbtransparenter Text-Overlay */
+    .overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
       padding: 1rem;
       text-align: center;
-      color: #777;
-      font-size: 0.9rem;
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>Willkommen auf meiner GitHub Page</h1>
-    <p>Eine einfache Startseite mit drei Kacheln</p>
-  </header>
+  <div class="container">
+    <a href="/wälder der erde/start.html" class="tile">
+      <img src="sunny-tropical-landscape.jpg" alt="Wälder dieser Erde">
+      <div class="overlay">Wälder dieser Erde</div>
+    </a>
 
-  <section class="grid">
-    <div class="card">
-      <img src="https://via.placeholder.com/400x180.png?text=Projekt+1" alt="Projekt 1">
-      <div class="card-content">
-        <h2>Projekt 1</h2>
-        <p>Kurze Beschreibung deines ersten Projekts. Zum Beispiel ein Web-Tool oder eine App.</p>
-      </div>
-    </div>
+    <a href="seite2.html" class="tile">
+      <img src="arch_title.png" alt="Ausgrabungsspiel">
+      <div class="overlay">Ausgrabungsspiel</div>
+    </a>
 
-    <div class="card">
-      <img src="https://via.placeholder.com/400x180.png?text=Projekt+2" alt="Projekt 2">
-      <div class="card-content">
-        <h2>Projekt 2</h2>
-        <p>Hier kannst du dein zweites Projekt oder eine andere interessante Arbeit zeigen.</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <img src="https://via.placeholder.com/400x180.png?text=Projekt+3" alt="Projekt 3">
-      <div class="card-content">
-        <h2>Projekt 3</h2>
-        <p>Ein weiteres Beispiel oder vielleicht ein persönliches Experiment.</p>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    © 2025 – Erstellt mit ❤️ für GitHub Pages
-  </footer>
+    <a href="seite3.html" class="tile">
+      <img src="Merian.jpg" alt="Kastellaun">
+      <div class="overlay">Kastellaun</div>
+    </a>
+  </div>
 
 </body>
 </html>
