@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemäßigte Wälder</title>
+    <link rel="stylesheet" href="styles_gemaessigt.css">
+
+</head>
+<body class="bg-gemaessigt">
+    <div class="waehleSzene">
+        <a class="start" href="start.html">Start</a>
+        <a class="boreal" href="boreal.html">Boreal</a>
+        <a class="tropisch" href="tropisch.html">Tropisch</a>
+        <a class="subtropisch" href="subtropisch.html">Subtropisch</a>
+    </div>
+    <div class="textfeld-links slide-in">
+    <h2>Gemäßigte Wälder</h2>
+    <p>Unsere Wälder in Deutschland liegen in der gemäßigten Klimazone. Dabei unterscheidet man
+    die warmtemperierte Zone rund um das Mittelmeer mit vorwiegend Laubbäumen von der
+        kühltemperierten Zone nördlich der Alpen mit einer größeren Durchmischung aus 
+        Nadel- und Laubbäumen.</p>
+    </div>
+
+
+    <div id="behausung_eu1" class="behausung pulse-button start-animation" onclick="toggleTier('tier1', 'info1')">
+        <div id="tier1" class="tier"></div>
+            <div id="info1" class="info-box-l"> 
+                <h3>Katastrophen</h3>
+                Unseren Wäldern droht von vielen Seiten Gefahr. Stürme verursachten in der 
+                Vergangenheit die größten Schäden (z.B. "Wiebke" 1990), aber auch die seit 2018
+                anhaltende Dürreperiode schwächt die heimischen Bäume. Hinzu kommen artentypische 
+                Probleme wie der Befall durch Insekten (z.B. Borkenkäfer) oder Krankheiten (z.B. Pilze).    
+            </div>
+        </div>
+
+    <div id="behausung_eu2" class="behausung pulse-button start-animation" onclick="toggleTier('tier2', 'info2')">
+        <div id="tier2" class="tier"></div>
+            <div id="info2" class="info-box-r"> 
+                <h3>Flora</h3>
+                In Deutschland wachsen fast 2.900 verschiedene Pflanzenarten in Wäldern, wovon 76 Baumarten sind.
+                Besonders häufig sind Kiefer, Fichte, Buche und Eiche (insgesamt 71% der Waldfläche) vertreten.  
+                
+            </div>
+        </div>
+
+    <div id="behausung_eu3" class="behausung pulse-button start-animation" onclick="toggleTier('tier3', 'info3')">
+        <div id="tier3" class="tier"></div>
+            <div id="info3" class="info-box-r"> 
+                <h3>Fauna</h3>
+                Unser Wald beherbergt 140 Wirbeltierarten, ca. 30.000 Insektenarten und 105 Vogelarten.
+                Die Entwicklung der Bestände der bedrohten Tierarten hat sich dabei stabilisiert, allerdings
+                stehen noch immer viele Arten auf der roten Liste. 
+            </div>
+        </div>
+
+    <div id="behausung_eu4" class="behausung pulse-button start-animation" onclick="toggleTier('tier4', 'info4')">
+        <div id="tier4" class="tier"></div>
+            <div id="info4" class="info-box-l"> 
+                <h3>Klimaschutz</h3>
+                Seit 2017 hat sich der Wald in Deutschland zu einer Kohlenstoff-Quelle entwickelt.
+                Statt Kohlenstoff aufzunehmen, gibt er wegen großer Schäden mehr Treibhausgas ab, als er aufnimmt.
+                Dennoch bleibt der Wald mit 1.184 Mio. Tonnen der wichtigste Kohlenstoffspeicher. 
+                Zum Vergleich: Insgesamt wurden in Deutschland im Jahr 2023 rund 674 Millionen Tonnen CO2-Äquivalent ausgestoßen. 
+                
+            </div>
+        </div>
+
+    <script>
+        function toggleTier(tierId, infoId) {
+            const tier = document.getElementById(tierId);
+            const info = document.getElementById(infoId);
+            const isVisible = tier.style.display === 'block';
+
+            // Alle Tiere und Info-Boxen ausblenden
+            document.querySelectorAll('.tier, .info-box-l, .info-box-r').forEach(el => el.style.display = 'none');
+
+            // Nur anzeigen, wenn es vorher nicht sichtbar war
+            if (!isVisible) {
+                tier.style.display = 'block';
+                info.style.display = 'block';
+            }
+        }
+
+        // Animation Stopp
+        // Besonderheit: Wenn ein Element einmal geklickt wurde, bekommt es keine pulsierende Animation mehr -> so beibehalten?
+        const buttons = document.querySelectorAll('.start-animation');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.classList.add('no-animation');
+            });
+        });
+    </script>
+    <script>
+        // RESET TIMER
+        let timeout;
+      
+        function resetTimer() {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            window.location.href = 'start.html'; // Pfad zur Startseite
+          }, 5 * 60 * 1000); // 5 Minuten in Millisekunden
+        }
+      
+        // Benutzerinteraktionen, die als "Aktivität" gelten
+        ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+          document.addEventListener(event, resetTimer, true);
+        });
+      
+        resetTimer(); // Timer beim Laden der Seite starten
+    </script>
+      
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subtropische Wälder</title>
+    <link rel="stylesheet" href="styles_subtropisch.css">
+
+</head>
+<body class="bg-subtropisch">
+    <div class="waehleSzene">
+        <a class="start" href="start.html">Start</a>
+        <a class="boreal" href="boreal.html">Boreal</a>
+        <a class="tropisch" href="tropisch.html">Tropisch</a>
+        <a class="gemaessigt" href="gemaessigt.html">Gemäßigt</a>
+      </div>
+
+    <div class="textfeld-links slide-in">
+        <h2>Subtropische Wälder (Lorbeerwälder)</h2>
+        <p> 
+            Sie unterscheiden sich von den Tropen durch das Vorhandensein von Saisons aus. Es regnet nicht ganzjährig, 
+            sondern es gibt eine mehr oder weniger lange Trockenzeit.
+            Die Monsunregenwälder (in der Nähe der Wendekreise) werden z.B. durch die großen globalen Windsysteme bewässert.
+            In der Trockenzeit werfen die Bäume ihr Laub ab.
+        </p>
+    </div>
+
+    <div id="behausung_eu1" class="behausung pulse-button start-animation" onclick="toggleTier('tier1', 'info1')">
+        <div id="tier1" class="tier"></div>
+        <div id="info1" class="info-box-r"> 
+            <h3>Katastrophen</h3>
+            Längere Dürreperioden gehören zu den natürlich auftretenden Phänomenen dieser Waldzone. Waldbrände, welche durch die Dürreperioden
+            begünstigt werden und oftmals bewusst oder unbewusst durch Menschen verursacht werden, vernichten jedes Jahr auf der ganzen Welt 
+            große Waldflächen.
+        </div>
+    </div>
+
+    <div id="behausung_eu2" class="behausung pulse-button start-animation" onclick="toggleTier('tier2', 'info2')">
+        <div id="tier2" class="tier"></div>
+        <div id="info2" class="info-box-r"> 
+            <h3>Flora</h3>
+            Typisch sind Baumfarne sowie im Unterschied zu den Tropenwäldern das Auftreten von Nadelbäumen. Davon abgesehen teilen sich
+            Subtropen und Tropen die pflanzliche Vielfalt.
+        </div>
+    </div>
+
+    <div id="behausung_eu3" class="behausung pulse-button start-animation" onclick="toggleTier('tier3', 'info3')">
+        <div id="tier3" class="tier"></div>
+        <div id="info3" class="info-box-l"> 
+            <h3>Fauna</h3>
+            Durch die sehr unterschiedlichen Ausprägungen der weltweiten subtropischen Wälder fällt es schwer, allgemeine Aussagen zur Biodiversität 
+            zu treffen. Nur bei den Säugetieren ist die Artenvielfalt in allen Regionen als eher gering einzustufen.
+        </div>
+    </div>
+
+    <div id="behausung_eu4" class="behausung pulse-button start-animation" onclick="toggleTier('tier4', 'info4')">
+        <div id="tier4" class="tier"></div>
+        <div id="info4" class="info-box-l"> 
+            <h3>Klimaschutz</h3>
+            Die natürlich bestehenden Trockenzeiten verlängern sich in einigen Teilen der Welt zusehends. Dadurch bedingt trocknen Bäume
+            und Landschaften verstärkt aus und Pflanzen sterben ab. Die Niederschläge konzentrieren sich auf weniger Tage im Jahr und werden 
+            extremer, was zu zerstörerischen Überflutungen und Bodenerosion führt.  
+        </div>
+    </div>
+
+    <script>
+        function toggleTier(tierId, infoId) {
+            const tier = document.getElementById(tierId);
+            const info = document.getElementById(infoId);
+            const isVisible = tier.style.display === 'block';
+
+            // Alle Tiere und Info-Boxen ausblenden
+            document.querySelectorAll('.tier, .info-box-l, .info-box-r').forEach(el => el.style.display = 'none');
+
+            // Nur anzeigen, wenn es vorher nicht sichtbar war
+            if (!isVisible) {
+                tier.style.display = 'block';
+                info.style.display = 'block';
+            }
+        }
+
+        // Animation Stopp
+        // Besonderheit: Wenn ein Element einmal geklickt wurde, bekommt es keine pulsierende Animation mehr -> so beibehalten?
+        const buttons = document.querySelectorAll('.start-animation');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.classList.add('no-animation');
+            });
+        });
+    </script>
+    <script>
+        // RESET TIMER
+        let timeout;
+      
+        function resetTimer() {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            window.location.href = 'start.html'; // Pfad zur Startseite
+          }, 5 * 60 * 1000); // 5 Minuten in Millisekunden
+        }
+      
+        // Benutzerinteraktionen, die als "Aktivität" gelten
+        ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+          document.addEventListener(event, resetTimer, true);
+        });
+      
+        resetTimer(); // Timer beim Laden der Seite starten
+    </script>
+
+</body>
+</html>

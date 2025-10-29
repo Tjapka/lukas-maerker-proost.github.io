@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boreale Wälder</title>
+    <link rel="stylesheet" href="styles_boreal.css">
+
+</head>
+<body class="bg-boreal">
+    <div class="waehleSzene">
+        <a class="start" href="start.html">Start</a>
+        <a class="tropisch" href="tropisch.html">Tropisch</a>
+        <a class="subtropisch" href="subtropisch.html">Subtropisch</a>
+        <a class="gemaessigt" href="gemaessigt.html">Gemäßigt</a>
+      </div>
+
+    <div class="textfeld-links slide-in">
+    <h2>Boreale Wälder</h2>
+    <p>Die nördlichste Vegetationszone, in der Bäume wachsen, ist die boreale Nadelwaldzone. Hier ist 
+        es kalt und trocken, es dominieren Fichten, Kiefern, Tannen und Lärchen. Zu den borealen 
+        Nadelwäldern gehört auch die größte zusammenhängende Waldfläche der Erde: die mehr als 
+        670 Millionen Hektar große Taiga (das entspricht der mehr als 18-fachen Größe Deutschlands). </p>
+    </div>
+
+    <div id="behausung_eu1" class="behausung pulse-button start-animation" onclick="toggleTier('tier1', 'info1')">
+        <div id="tier1" class="tier"></div>
+        <div id="info1" class="info-box-r"> 
+            <h3>Katastrophen</h3>
+            Feuer, Sturm, Schädlinge oder menschliche Aktivitäten sorgen dafür, dass
+            große Teile der nördlichen Waldflächen in einer Art Rotation keinen geschlossenen Baumbestand aufweisen.
+        </div>
+    </div>
+
+    <div id="behausung_eu2" class="behausung pulse-button start-animation" onclick="toggleTier('tier2', 'info2')">
+        <div id="tier2" class="tier"></div>
+        <div id="info2" class="info-box-r"> 
+            <h3>Flora</h3>
+            Es kommen nur vier Nadelbaumarten vor: Fichten, Kiefern, Tannen und Lärchen. Meist weisen
+            einzelne Waldstücke sogar nur ein bis zwei Baumarten auf. Der Waldboden 
+            ist mit niedrigen Zwergsträuchern bewachsen (z.B. Heidelbeeren). Durch die relative Artenarmut 
+            können nur wenige andere Pflanzen und Tiere in diesen Gebieten existieren.   
+        </div>
+    </div>
+
+    <div id="behausung_eu3" class="behausung pulse-button start-animation" onclick="toggleTier('tier3', 'info3')">
+        <div id="tier3" class="tier"></div>
+        <div id="info3" class="info-box-l"> 
+            <h3>Fauna</h3>
+            Die Tierwelt dieser Zone ist weltweit nahezu identisch. Da hier nur wenige verschiedene Pflanzen existieren, 
+            gibt es auch nur wenige verschiedene Tierarten. Für die kalten und langen Wintermonate 
+            haben die Tiere unterschiedliche Strategien entwickelt. 
+            Viele Vogelarten weichen in den Süden aus, einige Säugetiere und
+            Insekten halten Winterruhe. Nur wenige kleine Säuger führen ihr Leben unter der dicken Schneeschicht weiter.
+            Alle anderen Tiere setzen auf eine dicke Speckschicht und eine besonders schützende Fellschicht. 
+        </div>
+    </div>
+
+    <div id="behausung_eu4" class="behausung pulse-button start-animation" onclick="toggleTier('tier4', 'info4')">
+        <div id="tier4" class="tier"></div>
+        <div id="info4" class="info-box-l"> 
+            <h3>Klimaschutz</h3>
+            Tatsächlich sind heutzutage über 30 % der borealen Nadelwälder in einem 
+            weitgehend unbeeinflussten natürlichen Zustand. Diese Gebiete sind nahezu unbesiedelt. 
+            Weniger als 40 % sind noch naturnah und relativ gering beeinflusst.    
+        </div>
+    </div>
+
+    <script>
+        function toggleTier(tierId, infoId) {
+            const tier = document.getElementById(tierId);
+            const info = document.getElementById(infoId);
+            const isVisible = tier.style.display === 'block';
+
+            // Alle Tiere und Info-Boxen ausblenden
+            document.querySelectorAll('.tier, .info-box-l, .info-box-r').forEach(el => el.style.display = 'none');
+
+            // Nur anzeigen, wenn es vorher nicht sichtbar war
+            if (!isVisible) {
+                tier.style.display = 'block';
+                info.style.display = 'block';
+            }
+        }
+
+        // Animation Stopp
+        // Besonderheit: Wenn ein Element einmal geklickt wurde, bekommt es keine pulsierende Animation mehr -> so beibehalten?
+        const buttons = document.querySelectorAll('.start-animation');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.classList.add('no-animation');
+            });
+        });
+    </script>
+    <script>
+        // RESET TIMER
+        let timeout;
+      
+        function resetTimer() {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            window.location.href = 'start.html'; // Pfad zur Startseite
+          }, 5 * 60 * 1000); // 5 Minuten in Millisekunden
+        }
+      
+        // Benutzerinteraktionen, die als "Aktivität" gelten
+        ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+          document.addEventListener(event, resetTimer, true);
+        });
+      
+        resetTimer(); // Timer beim Laden der Seite starten
+    </script>
+
+</body>
+</html>

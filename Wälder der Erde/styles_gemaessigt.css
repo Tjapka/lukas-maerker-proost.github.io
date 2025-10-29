@@ -1,0 +1,286 @@
+
+
+body {
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+
+/* HINTERGRÜNDE */
+
+.bg-boreal {
+    background-image: url('images/backgrounds/Swedish_Spruce_Forest.jpg'); 
+} 
+.bg-subtropisch {
+    background-image: url('images/backgrounds/afrika2.jpeg'); 
+} 
+.bg-tropisch {
+    background-image: url('images/backgrounds/asien.jpg'); 
+} 
+.bg-gemaessigt {
+    background-image: url('images/backgrounds/wald1.jpg'); 
+} 
+.bg-europa {
+    background-image: url('images/backgrounds/wald1.jpg'); 
+} 
+.bg-afrika {
+    background-image: url('images/backgrounds/afrika2.jpeg'); 
+} 
+.bg-asien {
+    background-image: url('images/backgrounds/asien.jpg'); 
+} 
+.bg-australien {
+    background-image: url('images/backgrounds/australien.jpg'); 
+} 
+.bg-amerikas {
+    background-image: url('images/backgrounds/amerika.jpg'); 
+} 
+
+.textfeld-links {
+    width: 16%;
+    padding: 1rem;
+    position: absolute;
+    background-color: #dfeeeac5;
+    left: 0;
+    top: 40%;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.behausung {
+    width: 100px;
+    height: 100px;
+    background-color: rgba(139, 69, 19, 0.7); /* Farbe der Behausung */
+    border: 2px solid #209840;
+    border-radius: 100px;
+    position: absolute;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: white;
+    transition: transform 0.3s ease;
+    background-repeat: no-repeat;
+    background-attachment: inherit;
+    background-size: cover;
+    background-position: 50% 30%;
+    
+}
+
+.behausung .tier {
+    display: none;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 100px;
+    text-align: center;
+    line-height: 80px;
+    font-size: 16px;
+    background-repeat: no-repeat;
+    background-attachment: inherit;
+    background-size: cover;
+    background-position: 50% 30%;
+}
+
+.behausung .tier img {
+    width: 80px;
+    height: 80px;
+}
+
+.behausung.active .tier {
+    display: block;
+}
+
+/* Positionierung der Behausungen EUROPA */
+#behausung_eu1 {
+    bottom: 20%;
+    left: 80%;
+    background-image: url("images/pilz-7537613_1280.jpg");
+    background-position: 50% 30%;
+}
+
+#behausung_eu2 {
+    top: 45%;
+    right: 50%;
+    background-image: url("images/eiche-4542800_1280.jpg");
+}
+
+#behausung_eu3 {
+    top: 20%;
+    left: 10%;
+    background-image: url("images/Spechtnest.jpg");
+}
+
+#behausung_eu4 {
+    bottom: 70%;
+    left: 65%;
+    background-image: url("images/Gemaessigt/luftaufnahme-eines-dichten-waldes-mit-schonen-baumen-und-viel-grun.jpg");
+}
+
+/* Positionierung der Tiere */
+#tier1 {
+    background-image: url("images/Gemaessigt/Windbruch.jpg");
+    background-position: 50% 30%;
+}
+
+#tier2 {
+    background-image: url("images/Gemaessigt/Poertschach_Landspitz_Eiche_im_Herbstkleid_11102013_562.jpg");
+    background-position: 50% 30%;
+}
+
+#tier3 {
+    background-image: url("images/Gemaessigt/Specht.jpg");
+    background-position: 50% 30%;
+}
+
+#tier4 {
+    background-image: url("images/Gemaessigt/blick-auf-grune-waldbaume-mit-co2.jpg");
+    background-position: 50% 30%;
+}
+
+.info-box-l {
+    display: none;
+    position: absolute;
+    top: -120px;
+    left: -180px;
+    max-height: 50vh;
+    width: max-content;
+    background-color: rgba(255,255,255,0.9);
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    font-size: 14px;
+    max-width: 150px;
+}
+
+.info-box-r {
+    display: none;
+    position: absolute;
+    top: -120px;
+    left: 120px;
+    max-height: 50vh;
+    width: max-content;
+    background-color: rgba(255,255,255,0.9);
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    font-size: 14px;
+    max-width: 150px;
+}
+
+/* BUTTONS */
+.waehleSzene {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 1.2rem;
+    background-color: #dfeeeac5;
+    border-radius: 10px;
+}
+
+.waehleSzene a {
+    margin: 5px;
+    color: white;
+    padding: 10px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.waehleSzene a:nth-child(1) {
+    color: black;
+}
+
+.waehleSzene > .boreal {
+    background-color: #55b8a4;
+}
+.waehleSzene > .gemaessigt {
+    background-color: #209840;
+}
+.waehleSzene > .subtropisch {
+    background-color: #8bce43;
+}
+.waehleSzene > .tropisch {
+    background-color: #073f1a;
+}
+
+
+.waehleSzene > .start {
+    background-color: antiquewhite;
+    color: black;
+}
+.waehleSzene > .europa {
+    background-color: #c10000;
+}
+.waehleSzene > .afrika {
+    background-color: #fed52e;
+    color: black;
+}
+.waehleSzene > .nordamerika {
+    background-color: #00cc00;
+    color: black;
+}
+.waehleSzene > .suedamerika {
+    background-color: #008000;
+}
+.waehleSzene > .asien {
+    background-color: #f33e01;
+}
+.waehleSzene > .australien {
+    background-color: #c04080;
+}
+
+/* ANIMATIONEN */
+.pulse-button {
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .no-animation {
+    animation: none;
+  }
+
+  .slide-in {
+    
+    animation: slideFromLeft 1.5s ease-out forwards;
+  }
+  
+  /* Animation */
+  @keyframes slideFromLeft {
+    0% {
+      left: -100%;
+      opacity: 0;
+    }
+    100% {
+      left: 0;
+      opacity: 1;
+    }
+  }
+
+  
+  

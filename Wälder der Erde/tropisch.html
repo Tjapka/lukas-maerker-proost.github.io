@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boreale Wälder</title>
+    <link rel="stylesheet" href="styles_tropisch.css">
+
+</head>
+<body class="bg-tropisch">
+    <div class="waehleSzene">
+        <a class="start" href="start.html">Start</a>
+        <a class="boreal" href="boreal.html">Boreal</a>
+        <a class="subtropisch" href="subtropisch.html">Subtropisch</a>
+        <a class="gemaessigt" href="gemaessigt.html">Gemäßigt</a>
+      </div>
+
+    <div class="textfeld-links slide-in">
+        <h2>Tropische Wälder</h2>
+        <p>Alle Regenwälder der Erde zusammen bedecken etwa sieben Prozent der 
+            weltweiten Landfläche, beheimaten jedoch rund die Hälfte aller 
+            existierender Tier- und Pflanzenarten. Der größte zusammenhängende 
+            Regenwald liegt in Südamerika im Amazonasbecken. Seine Fläche übertrifft 
+            alle übrigen Regenwälder der Erde zusammengenommen.</p>
+    </div>
+
+    <div id="behausung_eu1" class="behausung pulse-button start-animation" onclick="toggleTier('tier1', 'info1')">
+        <div id="tier1" class="tier"></div>
+        <div id="info1" class="info-box-r"> 
+            <h3>Katastrophen</h3>
+            Eine der primären Ursachen für den Waldverlust sind Rodungen für 
+            landwirtschaftliche Zwecke: Die Tropen spielen eine wachsende Rolle in 
+            der globalen Produktion von Agrarprodukten. Entsprechend hoch ist der 
+            Druck auf das Land; Wälder werden abgeholzt oder niedergebrannt, um 
+            Ackerfläche und Weideland zu schaffen.    
+        </div>
+    </div>
+
+    <div id="behausung_eu2" class="behausung pulse-button start-animation" onclick="toggleTier('tier2', 'info2')">
+        <div id="tier2" class="tier"></div>
+        <div id="info2" class="info-box-r"> 
+            <h3>Flora</h3>
+            Schätzungsweise 70 % aller landgebundenen Arten dieser Erde leben 
+            in der tropischen Regenwaldzone    
+        </div>
+    </div>
+
+    <div id="behausung_eu3" class="behausung pulse-button start-animation" onclick="toggleTier('tier3', 'info3')">
+        <div id="tier3" class="tier"></div>
+        <div id="info3" class="info-box-l"> 
+            <h3>Fauna</h3>
+            Den größten Anteil an der großen Artenvielfalt der Regenwälder haben Gliederfüßer (Insekten, Spinnen, 
+            Tausendfüßer und Krebse).
+            Die Vögel des Regenwaldes zeichnen sich durch ein auffällig buntes Gefieder (Papageien und Kolibris) aus,
+            während Reptilien eine vergleichsweise große Statur erreichen (z.B. Krokodile und Chamäleons).
+            Säugetiere sind vergleichsweise selten vertreten (Elefanten, Tiger und Affen).
+        </div>
+    </div>
+
+    <div id="behausung_eu4" class="behausung pulse-button start-animation" onclick="toggleTier('tier4', 'info4')">
+        <div id="tier4" class="tier"></div>
+        <div id="info4" class="info-box-l"> 
+            <h3>Klimaschutz</h3>
+            Aktuell befindet sich der größte Regenwald der Erde, der Amazonas, 
+            an einem Scheidepunkt. Experten gehen davon aus, dass das Amazonasgebiet 
+            in unmittelbarer Zukunft zu einem Treiber des Klimawandels werden 
+            wird.     
+        </div>
+    </div>
+
+    <script>
+        function toggleTier(tierId, infoId) {
+            const tier = document.getElementById(tierId);
+            const info = document.getElementById(infoId);
+            const isVisible = tier.style.display === 'block';
+
+            // Alle Tiere und Info-Boxen ausblenden
+            document.querySelectorAll('.tier, .info-box-l, .info-box-r').forEach(el => el.style.display = 'none');
+
+            // Nur anzeigen, wenn es vorher nicht sichtbar war
+            if (!isVisible) {
+                tier.style.display = 'block';
+                info.style.display = 'block';
+            }
+        }
+
+        // Animation Stopp
+        // Besonderheit: Wenn ein Element einmal geklickt wurde, bekommt es keine pulsierende Animation mehr -> so beibehalten?
+        const buttons = document.querySelectorAll('.start-animation');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.classList.add('no-animation');
+            });
+        });
+    </script>
+    <script>
+        // RESET TIMER
+        let timeout;
+      
+        function resetTimer() {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            window.location.href = 'start.html'; // Pfad zur Startseite
+          }, 5 * 60 * 1000); // 5 Minuten in Millisekunden
+        }
+      
+        // Benutzerinteraktionen, die als "Aktivität" gelten
+        ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+          document.addEventListener(event, resetTimer, true);
+        });
+      
+        resetTimer(); // Timer beim Laden der Seite starten
+    </script>
+
+</body>
+</html>
